@@ -1,4 +1,5 @@
 /Scripts
 /Lib
+/share
 *.cfg
 __pycache__
