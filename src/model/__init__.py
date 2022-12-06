@@ -1,4 +1,7 @@
-def readHopfieldData(datasetPath:str)->list[list[int]]:
+__all__=['test', 'readHopfieldData', 'addNoise']
+import numpy as np
+
+def readHopfieldData(datasetPath:str)->tuple[list[list[int]], int]:
     dataset, lineSize=[[]], 0
     with open(datasetPath) as file:
         for line in file:
@@ -9,10 +12,45 @@ def readHopfieldData(datasetPath:str)->list[list[int]]:
             else: dataset.append([])
     return dataset, lineSize
 
+def addNoise(num:int, data:np.ndarray[int]):
+    data=np.array(data)
+    eidx=np.random.choice(data.shape[0], num, replace=False)
+    data[eidx]*=-1
+    return data
+
+def test():
+    datasetPath='dataset/Basic_Training.txt'
+    testDataPath='dataset/Basic_Testing.txt'
+    import numpy as np
+    dataset, _ = readHopfieldData(datasetPath)
+    dataset = np.array(dataset)
+    from .Hopfield import HopfieldNetwork
+    model = HopfieldNetwork()
+    model.fit(dataset)
+    testData, size = readHopfieldData(testDataPath)
+    testData = np.array(testData)
+    for data in testData: data=addNoise(30, data)
+    for data in testData:
+        for j in range(data.shape[0]//size):
+            for k in data[j*size:(j+1)*size]:
+                if k==1:print(1, end='')
+                else: print(' ', end='')
+            print()
+        print()
+    testData = np.array(testData)
+    res = model.predict(testData, lim=-1)
+    for i, m in zip(res, dataset):
+        for j in range(res.shape[1]//size):
+            for k in i[j*size:(j+1)*size]:
+                if k==1:print(1, end='')
+                else: print(' ', end='')
+            print()
+        print()
+
 
 if __name__=="__main__":
-    datasetPath='dataset/Bonus_Training.txt'
-    testDataPath='dataset/Bonus_Testing.txt'
+    datasetPath='dataset/Basic_Training.txt'
+    testDataPath='dataset/Basic_Testing.txt'
     import numpy as np
     dataset, _ = readHopfieldData(datasetPath)
     dataset = np.array(dataset)
@@ -21,27 +59,15 @@ if __name__=="__main__":
     model.fit(dataset)
     testData, size = readHopfieldData(testDataPath)
     testData = np.array(testData)
-    # eidx=np.random.choice(testData.shape[1], 30, replace=False)
+    # for data in testData: data=addNoise(30, data)
     # for data in testData:
-    #     data[eidx]*=-1
     #     for j in range(data.shape[0]//size):
     #         for k in data[j*size:(j+1)*size]:
     #             if k==1:print(1, end='')
     #             else: print(' ', end='')
     #         print()
     #     print()
-    res = model.predict(testData, lim=-13)
-
-    # for data in testData:
-    #     for i in range(30):
-    #         data=model.next(data)
-    #         if i%3==0: 
-    #             for j in range(data.shape[0]//size):
-    #                 for k in data[j*size:(j+1)*size]:
-    #                     if k==1:print(1, end='')
-    #                     else: print(' ', end='')
-    #                 print()
-    #         print()
+    res = model.predict(testData, lim=-1)
     for i, m in zip(res, dataset):
         for j in range(res.shape[1]//size):
             for k in i[j*size:(j+1)*size]:
@@ -49,9 +75,3 @@ if __name__=="__main__":
                 else: print(' ', end='')
             print()
         print()
-        for j in range(res.shape[1]//size):
-            for k in m[j*size:(j+1)*size]:
-                if k==1:print(1, end='')
-                else: print(' ', end='')
-            print()
-        print();print()
