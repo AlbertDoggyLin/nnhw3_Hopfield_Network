@@ -1,5 +1,9 @@
 /Scripts
 /Lib
 /share
+/build
+/dist
+*.spec
 *.cfg
 __pycache__
+/testData

@@ -39,7 +39,6 @@ class HopfieldNetwork:
         if needFlatten:=testData.ndim==1:
             testData=np.array([testData])
         for data in testData:
-            counter=0
             while True:
                 hater, ext = -1, 0
                 for idx in range(self._W.shape[0]):
